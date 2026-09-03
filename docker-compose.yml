@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgis/postgis:15-3.3
+    container_name: nagarflow-postgis
+    environment:
+      POSTGRES_DB: nagarflow_db
+      POSTGRES_USER: nagarflow_user
+      POSTGRES_PASSWORD: nagarflow_password
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    container_name: nagarflow-redis
+    ports:
+      - "6379:6379"
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: nagarflow-api
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://nagarflow_user:nagarflow_password@postgres:5432/nagarflow_db
+      - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=nagarflow-ai-docker-secret-2026
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./backend:/app
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: nagarflow-web
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
+    depends_on:
+      - backend
