@@ -7,4 +7,4 @@ services:
     startCommand: npm run start
     envVars:
       - key: NEXT_PUBLIC_API_URL
-        value: https://YOUR-VERCEL-BACKEND-URL.vercel.app
+        value: https://smart-city-traffic-intelligence-pla-hazel.vercel.app/api/v1
