@@ -6,11 +6,15 @@ from app.api.v1.api import api_router
 from app.seed.indore_data import seed_database
 from app.core.events import manager
 
-Base.metadata.create_all(bind=engine)
-
-db = SessionLocal()
-try: seed_database(db)
-finally: db.close()
+try:
+    Base.metadata.create_all(bind=engine)
+    db = SessionLocal()
+    try:
+        seed_database(db)
+    finally:
+        db.close()
+except Exception as e:
+    print(f"Database init warning (non-fatal): {e}")
 
 app = FastAPI(title=settings.PROJECT_NAME, version=settings.VERSION, openapi_url=f"{settings.API_V1_STR}/openapi.json")
 

@@ -10,12 +10,17 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24
 
-    DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./nagarflow.db")
+    DATABASE_URL: str = os.getenv(
+        "DATABASE_URL",
+        "sqlite:////tmp/nagarflow.db" if os.getenv("VERCEL") or os.getenv("VERCEL_ENV") or os.getenv("NOW_BUILDER") else "sqlite:///./nagarflow.db"
+    )
 
     CORS_ORIGINS: List[str] = [
         "http://localhost:3000",
         "http://127.0.0.1:3000",
         "http://localhost:8000",
+        "https://*.render.com",
+        "https://*.vercel.app",
         "*"
     ]
 

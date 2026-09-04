@@ -1,7 +1,16 @@
 import { Intersection, ForecastData, VisionFrameData, TrafficIncident, EmergencyCorridor, RouteOption, DigitalTwinBenchmark, CopilotResponse } from './types';
 import { MOCK_INTERSECTIONS, MOCK_INCIDENTS, MOCK_FORECAST, MOCK_BENCHMARK, MOCK_VISION_FRAME } from './mockData';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+function getApiBase(): string {
+  const envUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+  let cleaned = envUrl.trim().replace(/\/+$/, '');
+  if (!cleaned.endsWith('/api/v1')) {
+    cleaned = `${cleaned}/api/v1`;
+  }
+  return cleaned;
+}
+
+const API_BASE = getApiBase();
 
 async function fetchWithFallback<T>(url: string, fallbackData: T, options?: RequestInit): Promise<T> {
   try {
